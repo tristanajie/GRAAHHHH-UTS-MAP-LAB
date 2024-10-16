@@ -1,0 +1,32 @@
+<resources>
+    <string name="app_name">IF570_LAB_UTS_Muhammad Tristan Ajibrilyan Nandipinto_00000078653</string>
+
+    <!-- Login Activity -->
+    <string name="email_hint">Enter your email</string>
+    <string name="password_hint">Enter your password</string>
+    <string name="login_button">Login</string>
+    <string name="signup_button">Sign Up</string>
+    <string name="welcome_message">Welcome to Union Absensi</string>
+
+    <!-- Signup Activity -->
+    <string name="signup_title">Register Account</string>
+    <string name="register_button">Register</string>
+
+    <!-- Home Activity -->
+    <string name="absen_button">Absen Sekarang</string>
+    <string name="riwayat_button">Lihat Riwayat</string>
+    <string name="current_date">Tanggal</string>
+    <string name="current_time">Waktu</string>
+
+    <!-- Camera Activity -->
+    <string name="take_photo_button">Ambil Foto</string>
+
+    <!-- History Activity -->
+    <string name="history_title">Riwayat Absensi</string>
+
+    <!-- Error Messages -->
+    <string name="login_failed">Login failed, please try again.</string>
+    <string name="signup_failed">Registration failed, please try again.</string>
+    <string name="absensi_failed">Gagal menyimpan absensi.</string>
+    <string name="load_history_failed">Failed to load history.</string>
+</resources>

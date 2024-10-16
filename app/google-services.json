@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "250740345007",
+    "project_id": "map-tristan-ajie",
+    "storage_bucket": "map-tristan-ajie.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:250740345007:android:3e7788437248a6ed006c5a",
+        "android_client_info": {
+          "package_name": "com.example.if570_lab_uts_muhammadtristanajibrilyannandipinto_00000078653"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCKEorCjR5pv50VZFQ9VUk0wOAiPbVqjLs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
