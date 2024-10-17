@@ -1,6 +1,5 @@
 package com.example.if570_lab_uts_muhammadtristanajibrilyannandipinto_00000078653.model
 
-import androidx.fragment.app.FragmentActivity // Use AndroidX version
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -22,21 +21,32 @@ class AbsensiAdapter(private val absensiList: List<Absensi>) : RecyclerView.Adap
         private val timeTextView: TextView = itemView.findViewById(R.id.absensiTime)
 
         fun bind(attendance: Absensi) {
-            try {
-                val parsedDate = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).parse(attendance.date)
-                dateTextView.text = SimpleDateFormat("dd MMMM yyyy", Locale("en", "ID")).format(parsedDate)
-            } catch (e: ParseException) {
+            // Handle null values for date
+            if (attendance.date != null) {
+                try {
+                    val parsedDate = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).parse(attendance.date)
+                    dateTextView.text = SimpleDateFormat("dd MMMM yyyy", Locale("en", "ID")).format(parsedDate)
+                } catch (e: ParseException) {
+                    dateTextView.text = "Unknown date"
+                    Log.e("AbsensiAdapter", "Failed to parse date: ${attendance.date}", e)
+                }
+            } else {
                 dateTextView.text = "Unknown date"
-                Log.e("AbsensiAdapter", "Failed to parse date: ${attendance.date}", e)
             }
+
+            // Handle null values for time
             timeTextView.text = attendance.time ?: "Unknown time"
 
-            // Load the image using Glide, with error handling
-            Glide.with(itemView.context)
-                .load(attendance.imageUrl)
-                .placeholder(R.drawable.fikri) // Use a placeholder while loading
-                .error(R.drawable.fikri) // Show an error image if loading fails
-                .into(imageView)
+            // Load image with proper null handling
+            attendance.imageUrl?.let {
+                Glide.with(itemView.context)
+                    .load(it)
+                    .placeholder(R.drawable.fikri)
+                    .error(R.drawable.fikri) // Display error placeholder if image fails to load
+                    .into(imageView)
+            } ?: run {
+                imageView.setImageResource(R.drawable.fikri) // Default image if URL is null
+            }
         }
     }
 

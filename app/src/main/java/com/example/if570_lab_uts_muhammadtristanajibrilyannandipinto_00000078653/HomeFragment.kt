@@ -9,6 +9,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.provider.MediaStore
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -28,6 +29,9 @@ import java.io.ByteArrayOutputStream
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import com.example.if570_lab_uts_muhammadtristanajibrilyannandipinto_00000078653.HistoryFragment
+import com.example.if570_lab_uts_muhammadtristanajibrilyannandipinto_00000078653.model.Absensi
+import com.example.if570_lab_uts_muhammadtristanajibrilyannandipinto_00000078653.model.AbsensiAdapter
 
 class HomeFragment : Fragment() {
 
@@ -35,6 +39,9 @@ class HomeFragment : Fragment() {
     private lateinit var currentTime: TextView
     private lateinit var checkoutStatus: TextView
     private lateinit var buttonAttendance: ImageButton
+
+    private lateinit var attendanceList: MutableList<Absensi>
+    private lateinit var attendanceAdapter: AbsensiAdapter
 
     private lateinit var auth: FirebaseAuth
     private lateinit var firestore: FirebaseFirestore
@@ -269,7 +276,7 @@ class HomeFragment : Fragment() {
 
     private fun uploadImageToStorage(image: Bitmap) {
         val byteArrayOutputStream = ByteArrayOutputStream()
-        image.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream)
+        image.compress(Bitmap.CompressFormat.JPEG, 70, byteArrayOutputStream) // Compress image
         val imageBytes = byteArrayOutputStream.toByteArray()
 
         val imageRef = storage.reference.child("attendance_images/${System.currentTimeMillis()}.jpg")
@@ -277,11 +284,11 @@ class HomeFragment : Fragment() {
 
         uploadTask.addOnSuccessListener {
             imageRef.downloadUrl.addOnSuccessListener { uri ->
-                saveAttendanceData(uri.toString())
-            }.addOnFailureListener {
-                Toast.makeText(requireContext(), "Failed to get download URL", Toast.LENGTH_SHORT).show()
+                saveAttendanceData(uri.toString()) // Proceed to save data only after image is uploaded
+            }.addOnFailureListener { e ->
+                Toast.makeText(requireContext(), "Failed to get download URL: ${e.message}", Toast.LENGTH_SHORT).show()
             }
-        }.addOnFailureListener {
+        }.addOnFailureListener { e ->
             Toast.makeText(requireContext(), "Failed to upload image", Toast.LENGTH_SHORT).show()
         }
     }
@@ -298,11 +305,42 @@ class HomeFragment : Fragment() {
             .addOnSuccessListener {
                 Toast.makeText(requireContext(), "Attendance recorded successfully", Toast.LENGTH_SHORT).show()
                 loadCheckoutStatus()
+                getAttendanceRecords() // Fetch the latest attendance records after saving data
             }
             .addOnFailureListener { e ->
                 Toast.makeText(requireContext(), "Failed to save attendance", Toast.LENGTH_SHORT).show()
             }
     }
+
+    private fun getAttendanceRecords() {
+        val userId = FirebaseAuth.getInstance().currentUser?.uid
+
+        if (userId != null) {
+            firestore.collection("attendance")
+                .whereEqualTo("userId", userId)
+                .get()
+                .addOnSuccessListener { result ->
+                    attendanceList.clear() // Always clear the list before adding new data
+                    if (!result.isEmpty) {
+                        for (document in result) {
+                            val attendance = document.toObject(Absensi::class.java)
+                            attendanceList.add(attendance)
+                        }
+                        attendanceList.sortByDescending { it.date }
+                        attendanceAdapter.notifyDataSetChanged() // Notify adapter that the data has changed
+                    } else {
+                        Toast.makeText(requireContext(), "No attendance records found", Toast.LENGTH_SHORT).show()
+                    }
+                }
+                .addOnFailureListener { exception ->
+                    Log.e("getAttendanceRecords", "Failed to load data: ${exception.message}")
+                    Toast.makeText(requireContext(), "Failed to load data", Toast.LENGTH_SHORT).show()
+                }
+        } else {
+            Toast.makeText(requireContext(), "User not logged in", Toast.LENGTH_SHORT).show()
+        }
+    }
+
 
     private fun showCheckoutDialog() {
         val dialogBuilder = AlertDialog.Builder(requireContext())

@@ -72,5 +72,6 @@ class HistoryFragment : Fragment() {
         } else {
             Toast.makeText(requireContext(), "User not logged in", Toast.LENGTH_SHORT).show()
         }
+
     }
 }
